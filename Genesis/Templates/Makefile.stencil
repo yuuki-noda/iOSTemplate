@@ -1,0 +1,149 @@
+# Variables
+
+PRODUCT_FILE_NAME := {{ project_name }}.xcodeproj
+WORKSPACE_FILE_NAME := {{ project_name }}.xcworkspace
+
+XCODEBUILD_BUILD_LOG_NAME := ./build/xcodebuild_build.log
+
+.DEFAULT_GOAL := help
+
+# Targets
+
+.PHONY: help
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?# .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":[^#]*? #| #"}; {printf "%-42s%s\n", $$1 $$3, $$2}'
+
+.PHONY: setup
+setup: # Install dependencies and prepared development configuration
+{% if has_brewfile %}
+	brew bundle --no-upgrade --no-lock
+{% endif %}
+{% if use_viper %}
+	$(MAKE) install-templates
+{% endif %}
+{% if has_submodule %}
+	git submodule init
+	git submodule update
+{% endif %}
+	$(MAKE) install-ruby
+	$(MAKE) install-bundler
+	$(MAKE) install-mint
+{% if user_swagger %}
+	./Scripts/swagger-codegen.sh
+{% endif %}
+{% if use_cocoapods %}
+	bundle exec pod repo update
+{% endif %}
+	$(MAKE) generate-xcodeproj
+
+.PHONY: install-ruby
+install-ruby: # Install Ruby
+	rbenv install -s
+	gem install bundler
+
+.PHONY: install-bundler
+install-bundler: # Install Bundler dependencies
+	bundle config path vendor/bundle
+	bundle install --jobs 4 --retry 3
+
+.PHONY: update-bundler
+update-bundler: # Update Bundler dependencies
+	bundle config path vendor/bundle
+	bundle update --jobs 4 --retry 3
+
+{% if use_cocoapods -%}
+.PHONY: update-pods
+update-pods: # Update Podfile.lock
+	bundle exec pod update
+	$(MAKE) generate-xcodeproj
+{% endif %}
+
+.PHONY: update-dependencies
+update-dependencies: # Update all dependencies
+	$(MAKE) update-bundler
+{% if use_cocoapods %}
+	$(MAKE) update-pods
+{% endif %}
+	bundle exec fastlane update_plugins
+	mint run swift-outdated
+
+.PHONY: check-outdated
+check-outdated: # Check outdated SPM
+	mint run swift-outdated
+
+.PHONY: install-mint
+install-mint: # Install Mint dependencies
+	mint bootstrap --overwrite y
+
+{% if use_viper -%}
+TEMPLATE_DIR=./Genesis/Templates/GenesisVIPERTemplate
+
+.PHONY: install-templates
+install-templates: # Add Genesis templates
+	git rm -r --cached --ignore-unmatch ./Genesis/Templates/GenesisVIPERTemplate
+	git rm -r --cached --ignore-unmatch ./Genesis/Templates/GenesisCompositionalLayoutTemplate
+	git rm -r --cached --ignore-unmatch ./Genesis/Templates/GenesisFetchableCompositionalLayoutTemplate
+	git submodule add git@github.com:0x0c/GenesisVIPERTemplate.git ./Genesis/Templates/GenesisVIPERTemplate
+	git submodule add git@github.com:0x0c/GenesisCompositionalLayoutTemplate.git ./Genesis/Templates/GenesisCompositionalLayoutTemplate
+	git submodule add git@github.com:0x0c/GenesisFetchableCompositionalLayoutTemplate.git ./Genesis/Templates/GenesisFetchableCompositionalLayoutTemplate
+
+.PHONY: generate-module
+generate-module: # Generate VIPER module
+	mint run genesis generate ./Genesis/Templates/GenesisVIPERTemplate/template.yml --options "date:$(shell date +%Y/%m/%d)" --option-path ./Genesis/Generated/DeveloperInfo.yml
+	$(MAKE) format
+	$(MAKE) generate-xcodeproj
+
+.PHONY: generate-compositional-module
+generate-compositional-module: # Generate VIPER module
+	mint run genesis generate ./Genesis/Templates/GenesisCompositionalLayoutTemplate/template.yml --options "date:$(shell date +%Y/%m/%d)" --option-path ./Genesis/Generated/DeveloperInfo.yml
+	$(MAKE) format
+	$(MAKE) generate-xcodeproj
+
+.PHONY: generate-fetchable-compositional-module
+generate-fetchable-compositional-module: # Generate VIPER module
+	mint run genesis generate ./Genesis/Templates/GenesisFetchableCompositionalLayoutTemplate/template.yml --options "date:$(shell date +%Y/%m/%d)" --option-path ./Genesis/Generated/DeveloperInfo.yml
+	$(MAKE) format
+	$(MAKE) generate-xcodeproj
+{% endif %}
+
+.PHONY: generate-xcodeproj
+generate-xcodeproj: # Generate project with XcodeGen
+	mkdir -p Tests
+	mint run xcodegen
+
+.PHONY: beta
+beta: # Upload development app to Firebase App Distribution
+	bundle exec fastlane beta distribution_method:Firebase update_build_number:true
+
+.PHONY: testflight
+testflight: # Upload development app to TestFlight
+	bundle exec fastlane beta distribution_method:TestFlight export_method:app-store
+
+.PHONY: deploy
+deploy: # Upload app to App Store Connect
+	bundle exec fastlane deploy
+
+.PHONY: open
+open: # Open project in Xcode
+{% if use_cocoapods -%}
+	open ./${WORKSPACE_FILE_NAME}
+{% else %}
+	open ./${PRODUCT_FILE_NAME}
+{% endif %}
+
+.PHONY: format
+format: # Format code
+	mint run swiftformat .
+
+.PHONY: analyze
+analyze: # Analyze with SwiftLint
+	bundle exec fastlane test
+	mint run swiftlint swiftlint analyze --autocorrect --compiler-log-path ./${XCODEBUILD_BUILD_LOG_NAME}
+
+.PHONY: autofix
+autofix: # Fix linter warning using SwiftLint
+	mint run swiftlint lint --fix
+
+.PHONY: clean
+clean: # Delete generated files
+	./Scripts/clean.sh

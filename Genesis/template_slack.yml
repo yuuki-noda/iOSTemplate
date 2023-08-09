@@ -1,0 +1,7 @@
+options:
+  - name: slack_url
+    description: Slack Webhook URL
+    question: Please input Slack Webhook URL. More detail https://docs.fastlane.tools/actions/slack/
+files:
+  - template: Templates/slack_config.yml.stencil
+    path: slack_config.yml

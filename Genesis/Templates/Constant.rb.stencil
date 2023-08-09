@@ -1,0 +1,18 @@
+require 'yml'
+
+# https://qiita.com/fezrestia/items/e369821bfb59a645109e
+if !defined? IS_REQUIRED
+    IS_REQUIRED = true
+    PROJECT_NAME = '{{ project_name }}'
+
+    XCODE_GEN_PROJECT_YAML = 'project.yml'
+    TEAM_ID = "{{ development_team_id }}"
+    APP_STORE_TEAM_ID = "{{ apps_tore_team_id }}"
+
+    SLACK_ENABLED = File.exist?('../slack_config.yml')
+    slack_config = open('../slack_config.yml', 'r') { |f| YAML.load(f) }
+    ENV["SLACK_URL"] = slack_config["url"]
+
+    firebase_config = open('../firebase_config.yml', 'r') { |f| YAML.load(f) }
+    ENV["FIREBASE_CI_TOKEN"] = firebase_config["ci_token"]
+end

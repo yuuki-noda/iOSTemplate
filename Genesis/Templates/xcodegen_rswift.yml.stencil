@@ -1,0 +1,26 @@
+{% if use_r_swift %}
+targetTemplates:
+  App:
+    platform: iOS
+    type: application
+    sources:
+      - R.generated.swift
+schemes:
+  R.swift:
+    build:
+      targets:
+        {{ targets[0].name }}: all
+      preActions:
+        - script: |
+            if [ $(uname -m) = "arm64" ]; then
+              export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:${PATH+:$PATH}";
+            fi
+            if mint list | grep -q 'R.swift'; then
+              xcrun --sdk macosx mint run R.swift rswift generate "$SRCROOT/R.generated.swift"
+            else
+              echo "error: R.swift not installed; run 'mint bootstrap' to install"
+              return -1
+            fi
+          name: R.swift Run Script
+          settingsTarget: {{ targets[0].name }}
+{% endif %}

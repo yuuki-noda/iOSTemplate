@@ -1,0 +1,146 @@
+options:
+  - name: developer_name
+    description: Your name
+    question: Please input your name that is shown in a header of source codes.
+  - name: project_name
+    description: The name of the project
+    question: What is the name of your project?
+  - name: bundle_identifier_prefix
+    description: Bundle identifier prefix of the app
+    question: What is prefix of bundle identifier for your app?
+  - name: deployment_target
+    description: The minimum iOS Deployment Target
+    question: What is the minimum iOS Deployment Target of your app?
+    required: true
+    type: choice
+    choices:
+      - 13.0
+      - 14.0
+      - 15.0
+      - 16.0
+  - name: targets
+    description: The list of targets
+    question: Do you wish to add a target? (y/n)
+    type: array
+    options:
+      - name: name
+        question: What's the name of the target?
+        type: string
+  - name: apple_id
+    description: Apple Developer ID
+    question: What is your Apple Developer ID?
+  - name: development_team_id
+    description: Development team of your apple developer program account
+    question: What is your development team ID?
+  - name: itc_team_id
+    description: App Store Connect team ID
+    question: What is App Store Connect team ID which contains your App?
+  - name: use_cocoapods
+    description: Either use CocoaPods or not
+    question: Do you wish to use CocoaPods? (y/n)
+    required: true
+    type: boolean
+  - name: use_periphery
+    description: Either use Periphery or not
+    question: Do you wish to use Periphery? (y/n)
+    required: true
+    type: boolean
+  - name: use_r_swift
+    description: Either use R.swift or not
+    question: Do you wish to use R.swift? (y/n)
+    required: true
+    type: boolean
+  - name: use_viper
+    description: Either use viper module or not
+    question: Do you wish to use VIPER module code generator? (y/n)
+    required: true
+    type: boolean
+  - name: freezed
+    description: Either freeze project or not
+    question: Freeze project settings? (y/n)
+    required: true
+    type: boolean
+files:
+# Genesis
+  - template: Templates/BootstrapOptions.yml.stencil
+    path: Genesis/Generated/BootstrapOptions.yml
+    include: not freezed
+  - template: Templates/DeveloperInfo.yml.stencil
+    path: Genesis/Generated/DeveloperInfo.yml
+# XcodeGen
+  - template: Templates/project.yml.stencil
+    path: project.yml
+    include: not freezed
+  - template: Templates/target.yml.stencil
+    path: "XcodeGen/{{ name|split:\" \"|join:\"_\" }}.yml"
+    context: targets
+    include: not freezed
+  - template: Templates/xcodegen_rswift.yml.stencil
+    path: "XcodeGen/rswift.yml"
+    include: not freezed
+  - template: Templates/xcodegen_cocoapods.yml.stencil
+    path: "XcodeGen/cocoapods.yml"
+    include: not freezed
+  - template: Templates/xcodegen_firebase.yml.stencil
+    path: "XcodeGen/firebase.yml"
+    include: not freezed
+  - template: Templates/xcodegen_spm.yml.stencil
+    path: "XcodeGen/spm.yml"
+    include: not freezed
+  - template: Templates/xcodegen_periphery.yml.stencil
+    path: "XcodeGen/periphery.yml"
+    include: not freezed
+# fastlane
+  - template: Templates/Appfile.stencil
+    path: fastlane/Appfile
+  - template: Templates/Secrets.rb.stencil
+    path: fastlane/Secrets.rb
+  - template: Templates/Constant.rb.stencil
+    path: fastlane/Constant.rb
+  - template: Templates/environment.yml.stencil
+    path: environment.yml
+    include: not freezed
+  - template: Templates/CustomLane.rb.stencil
+    path: fastlane/CustomLane.rb
+# README
+  - template: Templates/README.md.stencil
+    path: README.md
+# Scripts
+  - template: Templates/clean.sh.stencil
+    path: Scripts/clean.sh
+# Makefile
+  - template: Templates/Makefile.stencil
+    path: Makefile
+    include: not freezed
+# Gemfile
+  - template: Templates/Gemfile.stencil
+    path: Gemfile
+    include: not freezed
+# Swift
+  - template: Fixtures/AppDelegate.swift.stencil
+    path: App/AppDelegate.swift
+    include: not freezed
+  - template: Fixtures/SceneDelegate.swift.stencil
+    path: App/SceneDelegate.swift
+    include: not freezed
+  - template: Fixtures/ViewController.swift.stencil
+    path: App/ViewController.swift
+    include: not freezed
+# CocoaPods
+  - template: Templates/Podfile.stencil
+    path: Podfile
+    include: use_cocoapods and not freezed
+# Swift Package Manager
+  - template: Templates/Package.swift.stencil
+    path: Packages/{{ project_name }}Kit/Package.swift
+    include: not use_cocoapods and not freezed
+  - path: Packages/{{ project_name }}Kit/Sources/{{ project_name }}Kit.swift
+    contents: "// "
+    include: not use_cocoapods and not freezed
+# R.swift
+  - path: ".rswiftignore"
+    contents: "**/MainInterface.storyboard"
+    include: use_r_swift and not freezed
+  - path: "R.generated.swift"
+    contents: "// "
+    include: use_r_swift and not freezed

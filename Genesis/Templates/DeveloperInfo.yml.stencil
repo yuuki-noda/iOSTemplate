@@ -1,0 +1,4 @@
+project_name: {{ project_name }}
+developer_name: {{ developer_name }}
+output_path: ./App/Module
+test_output_path: ./Tests/Module

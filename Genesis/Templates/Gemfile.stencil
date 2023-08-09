@@ -1,0 +1,12 @@
+# A sample Gemfile
+source "https://rubygems.org"
+
+# gem 'danger-xcode_summary'
+gem "badge"
+{% if use_cocoapods %}
+gem "cocoapods"
+{% endif %}
+gem "fastlane"
+
+plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
+eval_gemfile(plugins_path) if File.exist?(plugins_path)

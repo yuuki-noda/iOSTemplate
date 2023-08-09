@@ -1,0 +1,5 @@
+environment:
+  development:
+    scheme: '{{ project_name }}'
+    bundle_identifier: '{{ bundle_identifier_prefix }}.{{ project_name }}'
+    googleservice_info_plist: 'Add GoogleServiceInfo.plist path if you use Firebase'

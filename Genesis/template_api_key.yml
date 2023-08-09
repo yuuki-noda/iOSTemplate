@@ -1,0 +1,13 @@
+options:
+  - name: key_id
+    description: Key ID
+    question: Please input key ID.
+  - name: issuer_id
+    description: Issuer ID
+    question: Please input issuer ID.
+  - name: key_filepath
+    description: Path for the key.
+    question: Please input path of the key from root directory of the app.
+files:
+  - template: Templates/api_key.yml.stencil
+    path: api_key.yml

@@ -1,0 +1,5 @@
+app_identifier "{{ bundle_identifier_prefix }}.{{ project_name }}"
+apple_id "{{ apple_id }}"
+team_id "{{ development_team_id }}"
+itc_team_id "{{ itc_team_id }}"
+# Find itc_team_id at https://appstoreconnect.apple.com/WebObjects/iTunesConnect.woa/ra/user/detail. See `contentProviderId`

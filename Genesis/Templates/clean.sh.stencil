@@ -1,0 +1,59 @@
+# foundation
+{% if freezed == false %}
+rm -f README.md
+rm -f Makefile
+{% endif %}
+rm -f Genesis/Generated/DeveloperInfo.yml
+
+# fastlane
+{% if freezed == false %}
+rm -f environment.yml
+rm -f fastlane/Appfile
+rm -f fastlane/Constant.rb
+{% endif %}
+rm -rf fastlane/CustomLane.rb
+
+# Gemfile
+{% if freezed == false %}
+rm -f Gemfile
+rm -f Gemfile.lock
+{% endif %}
+rm -rf .bundle
+rm -rf vendor
+
+# CocoaPods
+{% if freezed == false %}
+rm -f Podfile
+rm -f Podfile.lock
+{% endif %}
+rm -rf Pods
+
+# R.swift
+{% if freezed == false %}
+rm -f .rswiftignore
+rm -f R.generated.swift
+{% endif %}
+
+# Swift Package Manager
+{% if freezed == false %}
+rm -rf Packages/{{ project_name }}Kit
+{% endif %}
+
+# Swift
+{% if freezed == false %}
+rm -f App/AppDelegate.swift
+rm -f App/SceneDelegate.swift
+rm -f App/ViewController.swift
+{% endif %}
+
+# XcodeGen
+{% if freezed == false %}
+rm -f project.yml
+rm -rf XcodeGen
+{% endif %}
+rm -rf App/Resource/InfoPlist
+rm -rf App/Resource/Entitlement
+
+# Xcode
+rm -rf *.xcodeproj
+rm -rf *.xcworkspace

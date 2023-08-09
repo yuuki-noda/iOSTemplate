@@ -1,0 +1,86 @@
+include:
+  {% for target in targets %}
+  - path: XcodeGen/{{ target.name|split:" "|join:"_" }}.yml
+    relativePaths: false
+  {% endfor %}
+  - path: XcodeGen/rswift.yml
+    relativePaths: false
+  - path: XcodeGen/cocoapods.yml
+    relativePaths: false
+  - path: XcodeGen/firebase.yml
+    relativePaths: false
+  - path: XcodeGen/spm.yml
+    relativePaths: false
+name: {{ project_name }}
+configs:
+  Debug: debug
+  Release: release
+options:
+  bundleIdPrefix: {{ bundle_identifier_prefix }}
+  deploymentTarget:
+    iOS: {{ deployment_target }}
+targetTemplates:
+  App:
+    platform: iOS
+    type: application
+    sources:
+      - path: App
+        excludes:
+          - "**/*.framework"
+          - "**/*.xcframework"
+          - "./Resource/Test/**"
+          - "./Resource/InfoPlist/**"
+    requiresObjCLinking: true
+    preBuildScripts:
+      - script: |
+          if [ $(uname -m) = "arm64" ]; then
+            export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:${PATH+:$PATH}";
+          fi
+          xcrun --sdk macosx mint run swiftlint
+        name: Swiftlint Run Script
+    info:
+      properties:
+        CFBundleShortVersionString: &Version 1.0.0
+        CFBundleVersion: &BundleVersion "197001010000"
+        CFBundleDevelopmentRegion: "$(DEVELOPMENT_LANGUAGE)"
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Default Configuration
+                UISceneDelegateClassName: "$(PRODUCT_MODULE_NAME).SceneDelegate"
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~iphone:
+          - UIInterfaceOrientationPortrait
+        UILaunchScreen:
+          UIColorName: "AccentColor"
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+          NSAllowsArbitraryLoadsInWebContent: true
+          NSAllowsArbitraryLoadsForMedia: true
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: ""
+        LSRequiresIPhoneOS: true
+    settings:
+      base:
+        MARKETING_VERSION: *Version
+        CURRENT_PROJECT_VERSION: *BundleVersion
+        VERSIONING_SYSTEM: apple-generic
+        UPDATE_R_SWIFT: false
+        DEVELOPMENT_TEAM: {{ development_team_id }}
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: "Debug"
+          SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+          GCC_PREPROCESSOR_DEFINITIONS:
+            - "$(inherited)"
+            - DEBUG=1
+          OTHER_SWIFT_FLAGS:
+            - "$(inherited)"
+            - "-Xfrontend -debug-time-function-bodies"
+        Release:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: "Release"

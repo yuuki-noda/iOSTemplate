@@ -1,0 +1,9 @@
+{% if not use_cocoapods %}
+packages:
+  {{ project_name }}Kit:
+    path: ./Packages/{{ project_name }}Kit
+targetTemplates:
+  App:
+    dependencies:
+      - package: {{ project_name }}Kit
+{% endif %}

@@ -1,0 +1,7 @@
+options:
+  - name: ci_token
+    description: Firebase CI token
+    question: Please input Firebase CI token. More detail https://firebase.google.com/docs/cli?hl=en#cli-ci-systems
+files:
+  - template: Templates/firebase_config.yml.stencil
+    path: firebase_config.yml

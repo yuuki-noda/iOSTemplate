@@ -1,0 +1,210 @@
+# can also be listed using the `fastlane actions` command
+
+# Change the syntax highlighting to Ruby
+# All lines starting with a # are ignored when running `fastlane`
+
+# By default, fastlane will send which actions are used
+# No personal data is shared, more information on https://github.com/fastlane/enhancer
+# Uncomment the following line to opt out
+opt_out_usage
+
+# If you want to automatically update fastlane if a new version is available:
+# update_fastlane
+
+# This is the minimum version number required.
+# Update this, if you use features of a newer version
+
+default_platform :ios
+
+import "./Constant.rb"
+import "./Util.rb"
+import "./CustomLane.rb"
+
+ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "120" 
+
+platform :ios do
+  
+  desc "build numberを更新する"
+  lane :update_build_number do
+    build_number = sh("date +%Y%m%d%H%M").chomp
+    increment_build_number(
+      build_number: build_number,
+    )
+
+    # update project.yml
+    Dir.chdir("..") do
+      sh("yq eval -i \'.targetTemplates.App.info.properties.CFBundleVersion = \"#{build_number}\" | .targetTemplates.App.info.properties.CFBundleVersion anchor= \"BundleVersion\"\' #{XCODE_GEN_PROJECT_YAML}")
+    end
+  end
+
+  desc "dSYMをアップロードする"
+  lane :refresh_dsym do |options|
+    environment = get_valid_environment(options[:environment] || "development")
+    scheme = environment["scheme"]
+    app_identifier = environment["bundle_identifier"]
+    googleservice_info_plist = environment["googleservice_info_plist"]
+    version = options[:version] || get_version_number(xcodeproj: "#{PROJECT_NAME}.xcodeproj", target: scheme)
+
+    load_api_key(is_ci: options[:ci])
+    download_dsyms(
+      version: version,
+      app_identifier: app_identifier,
+    )
+    upload_symbols_to_crashlytics(gsp_path: googleservice_info_plist)
+    if SLACK_ENABLED
+      slack(message: "<!here|here>: .dSYM is uploaded. :rocket:")
+    end
+    clean_build_artifacts
+  end
+
+  desc "アプリのベータ版を配信する"
+  lane :beta do |options|
+    begin
+      environment = get_valid_environment(options[:environment] || "development")
+      scheme = environment["scheme"]
+      app_identifier = environment["bundle_identifier"]
+
+      configuration = options[:configuration] || "Debug"
+      skip_waiting_for_build_processing = options[:skip_waiting_for_build_processing] || false
+      changelog = options[:changelog] || ""
+      
+      export_method = options[:export_method] || "development"
+
+      if options[:update_build_number]
+        update_build_number
+      end
+
+      version = get_version_number(xcodeproj: "#{PROJECT_NAME}.xcodeproj", target: scheme)
+      build = get_build_number(xcodeproj: "#{PROJECT_NAME}.xcodeproj")
+      add_badge(
+        shield: version + "-" + build + "-orange",
+        no_badge: true,
+        shield_no_resize: true,
+      )
+
+      export_app(
+        scheme: scheme,
+        configuration: configuration,
+        export_method: export_method,
+        environment: environment,
+      )
+
+      distribution_method = options[:distribution_method] || "Firebase"
+      case distribution_method
+      when "TestFlight"
+        load_api_key(is_ci: options[:ci])
+        upload_to_testflight(
+          changelog: changelog,
+          skip_submission: true,
+          skip_waiting_for_build_processing: skip_waiting_for_build_processing,
+          app_identifier: app_identifier
+        )
+      when "Firebase"
+        googleservice_info_plist = environment["googleservice_info_plist"]
+        upload_to_firebase(
+          googleservice_info_plist: googleservice_info_plist,
+          groups: options[:groups] || "",
+          release_notes: changelog
+        )
+      else
+        UI.user_error!("Invalid distribution method: #{distribution_method}")
+      end
+
+      if SLACK_ENABLED
+        slack(message: "<!here|here>: New :ios: *#{version}* (#{build}) has been submitted to *Firebase* :rocket:")
+      end
+
+      if options[:update_build_number]
+        commit_project_yml
+      end
+      push_to_git_remote
+    rescue => error
+      puts error
+      restore_resources
+      raise
+    ensure
+      restore_resources
+    end
+  end
+
+  desc "AppStoreへ申請する"
+  lane :deploy do |options|
+    environment = options[:environment]
+    if environment == nil
+      UI.user_error!("environment should not be nil")
+    end
+
+    if options[:upload_beta]
+      beta(environment: environment, is_ci: options[:ci])
+    end
+
+    load_api_key(is_ci: options[:ci])
+    export_app(configuration: "Release", export_method: "app-store")
+    deliver(
+      force: true,
+      # itc_provider: ""
+    )
+    valid_environment = get_valid_environment(environment)
+    scheme = valid_environment["scheme"]
+    version = get_version_number(xcodeproj: "#{PROJECT_NAME}.xcodeproj", target: scheme)
+    build = get_build_number(xcodeproj: "#{PROJECT_NAME}.xcodeproj")
+    if SLACK_ENABLED
+      slack(message: "<!here|here>: *#{version}* (#{build}) has been uploaded to *AppStore* :rocket:")
+    end
+  end
+
+  desc "App Store Connectのmetadataを更新する"
+  lane :update_metadata do |options|
+    environment = get_valid_environment(options[:environment] || "development")
+    scheme = environment["scheme"]
+
+    load_api_key(is_ci: options[:ci])
+
+    deliver(
+      force: true,
+      # itc_provider: "",
+      skip_binary_upload: true,
+    )
+    version = get_version_number(xcodeproj: "#{PROJECT_NAME}.xcodeproj", target: scheme)
+    build = get_build_number(xcodeproj: "#{PROJECT_NAME}.xcodeproj")
+    if SLACK_ENABLED
+      slack(message: "<!here|here>: Successfully uploaded set of metadata to App Store Connect. *#{version}* (#{build})")
+    end
+  end
+
+  desc "証明書をダウンロードする"
+  lane :certificates do |options|
+    readonly = !options[:force] || true
+    environment = get_valid_environment(options[:environment] || "development")
+    load_api_key(is_ci: options[:ci] || false)
+    app_identifier = environment["bundle_identifier"]
+    match(
+      app_identifier: [
+        app_identifier
+      ],
+      git_branch: "main",
+      readonly: readonly
+    )
+    match(
+      app_identifier: [
+        app_identifier
+      ],
+      git_branch: "main",
+      readonly: readonly,
+      type: 'appstore'
+    )
+  end
+
+  # You can define as many lanes as you want
+
+  after_all do |lane|
+    # clean_build_artifacts
+    notification(subtitle: "Fastlane finished", message: "done")
+    # This block is called, only if the executed lane was successful
+  end
+
+  error do |lane, exception|
+    UI.error exception
+    raise
+  end
+end

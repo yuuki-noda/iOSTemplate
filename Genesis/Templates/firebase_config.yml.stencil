@@ -1,0 +1,1 @@
+ci_token: '{{ firebase_ci_token }}'

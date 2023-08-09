@@ -1,0 +1,34 @@
+// swift-tools-version: 5.8
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
+import PackageDescription
+
+let package = Package(
+    name: "{{ project_name }}Kit",
+    platforms: [
+        .iOS(.v15),
+        .macOS(.v11)
+    ],
+    products: [
+        .library(
+            name: "{{ project_name }}Kit",
+            targets: ["{{ project_name }}Kit"]
+        )
+    ],
+    dependencies: [
+{% if use_r_swift %}
+        .package(url: "https://github.com/mac-cain13/R.swift.Library", from: "5.4.0"),
+{% endif %}
+    ],
+    targets: [
+        .target(
+            name: "{{ project_name }}Kit",
+            dependencies: [
+{% if use_r_swift %}
+                .product(name: "Rswift", package: "R.swift.Library"),
+{% endif %}
+            ],
+            path: "Sources"
+        )
+    ]
+)

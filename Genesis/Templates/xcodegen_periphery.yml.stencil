@@ -1,0 +1,21 @@
+{% if use_periphery %}
+aggregateTargets:
+  Periphery:
+    targets:
+      {% for target in targets %}
+      - {{ target.name }}
+      {% endfor %}
+    buildScripts:
+      - script: |
+          if [ $(uname -m) = "arm64" ]; then
+            export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:${PATH+:$PATH}";
+          fi
+          xcrun --sdk macosx periphery scan --verbose
+schemes:
+  Periphery:
+    build:
+      targets:
+        Periphery: all
+    run:
+      config: Debug
+{% endif %}

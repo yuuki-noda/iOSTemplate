@@ -1,0 +1,61 @@
+targets:
+  {{ name }}:
+    templates:
+      - App
+{% if use_firebase %}
+    preBuildScripts:
+      - script: |
+          PATH_TO_GOOGLE_PLISTS="${PROJECT_DIR}/App/Resource/Firebase"
+          cp -r "$PATH_TO_GOOGLE_PLISTS/GoogleService-Info.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+        name: GoogleService-Info Run Script
+{% endif %}
+    info:
+      path: &{{ name|split:" "|join:"_" }}_InfoPlistPath App/Resource/InfoPlist/{{ name|split:" "|join:"_" }}Info.plist
+      properties:
+        CFBundleDisplayName: "{{ name }}"
+    entitlements:
+      path: App/Resource/Entitlement/{{ name|split:" "|join:"_" }}.entitlements
+      properties:
+    settings:
+      base:
+        INFOPLIST_FILE: *{{ name|split:" "|join:"_" }}_InfoPlistPath
+        # PRODUCT_BUNDLE_IDENTIFIER:
+        CODE_SIGN_ENTITLEMENTS: App/Resource/Entitlement/{{ name|split:" "|join:"_" }}.entitlements
+        DEBUG_INFORMATION_FORMAT: &DEBUG_INFORMATION_FORMAT dwarf-with-dsym
+      configs:
+        Debug: &DebugConfig
+          # PROVISIONING_PROFILE_SPECIFIER:
+          OTHER_SWIFT_FLAGS:
+            - "$(inherited)"
+            - "-D"
+            - Release
+        Release: &ReleaseConfig
+          CODE_SIGN_IDENTITY: iPhone Distribution
+          # PROVISIONING_PROFILE_SPECIFIER:
+    scheme:
+      {{ name }}:
+        build:
+          targets:
+            {{ name }}: all
+      testTargets:
+        - {{ name }}Tests
+      environmentVariables:
+        DYLD_PRINT_STATISTICS: true
+  {{ name }}Tests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+    settings:
+      base:
+        INFOPLIST_FILE: Tests/InfoPlist/{{ name|split:" "|join:"_" }}Info.plist
+        CODE_SIGN_STYLE: Automatic
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/{{ name }}.app/{{ name }}"
+        ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: true
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        DEBUG_INFORMATION_FORMAT: *DEBUG_INFORMATION_FORMAT
+      configs:
+        Debug: *DebugConfig
+        Release: *ReleaseConfig
+    dependencies:
+      - target: {{ name }}
