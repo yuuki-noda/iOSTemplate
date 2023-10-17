@@ -2,7 +2,11 @@
 
 ## 前提ライブラリ
 
-genesisのインストール
+### mintのインストール
+
+`brew install mint`
+
+###genesisのインストール
 
 `mint install yonaskolb/genesis`
 
