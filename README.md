@@ -6,7 +6,7 @@
 
 `brew install mint`
 
-###genesisのインストール
+### genesisのインストール
 
 `mint install yonaskolb/genesis`
 
