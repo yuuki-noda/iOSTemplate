@@ -1,5 +1,2 @@
-brew "imagemagick"
 brew "mint"
 brew "rbenv"
-brew "yq"
-cask "peripheryapp/periphery/periphery"

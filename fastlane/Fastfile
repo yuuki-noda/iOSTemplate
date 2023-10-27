@@ -30,11 +30,6 @@ platform :ios do
     increment_build_number(
       build_number: build_number,
     )
-
-    # update project.yml
-    Dir.chdir("..") do
-      sh("yq eval -i \'.targetTemplates.App.info.properties.CFBundleVersion = \"#{build_number}\" | .targetTemplates.App.info.properties.CFBundleVersion anchor= \"BundleVersion\"\' #{XCODE_GEN_PROJECT_YAML}")
-    end
   end
 
   desc "dSYMをアップロードする"
@@ -89,9 +84,6 @@ platform :ios do
         environment: environment,
       )
 
-      distribution_method = options[:distribution_method] || "Firebase"
-      case distribution_method
-      when "TestFlight"
         load_api_key(is_ci: options[:ci])
         upload_to_testflight(
           changelog: changelog,
@@ -99,24 +91,7 @@ platform :ios do
           skip_waiting_for_build_processing: skip_waiting_for_build_processing,
           app_identifier: app_identifier
         )
-      when "Firebase"
-        googleservice_info_plist = environment["googleservice_info_plist"]
-        upload_to_firebase(
-          googleservice_info_plist: googleservice_info_plist,
-          groups: options[:groups] || "",
-          release_notes: changelog
-        )
-      else
-        UI.user_error!("Invalid distribution method: #{distribution_method}")
-      end
-
-      if SLACK_ENABLED
-        slack(message: "<!here|here>: New :ios: *#{version}* (#{build}) has been submitted to *Firebase* :rocket:")
-      end
-
-      if options[:update_build_number]
-        commit_project_yml
-      end
+      
       push_to_git_remote
     rescue => error
       puts error
