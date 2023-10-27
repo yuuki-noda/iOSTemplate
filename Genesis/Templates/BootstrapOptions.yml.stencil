@@ -1,13 +1,7 @@
 project_name: {{ project_name }}
 bundle_identifier_prefix: {{ bundle_identifier_prefix }}
-deployment_target: {{ deployment_target }}
 targets: 
-{% for target in targets %}
-  - name: {{ target.name }}
-{% endfor %}
+  - name: {{ project_name }}
 development_team_id: {{ development_team_id }}
 itc_team_id: {{ itc_team_id }}
-use_r_swift: {{ use_r_swift }}
-use_viper: {{ use_viper }}
-use_periphery: {{ use_periphery }}
 freezed: {{ freezed }}

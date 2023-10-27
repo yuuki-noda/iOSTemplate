@@ -16,17 +16,13 @@ let package = Package(
         )
     ],
     dependencies: [
-{% if use_r_swift %}
-        .package(url: "https://github.com/mac-cain13/R.swift.Library", from: "5.4.0"),
-{% endif %}
+        .package(url: "https://github.com/mac-cain13/R.swift.Library", from: "7.4.0"),
     ],
     targets: [
         .target(
             name: "{{ project_name }}Kit",
             dependencies: [
-{% if use_r_swift %}
                 .product(name: "Rswift", package: "R.swift.Library"),
-{% endif %}
             ],
             path: "Sources"
         )

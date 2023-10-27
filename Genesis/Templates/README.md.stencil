@@ -20,6 +20,12 @@
    source ~/.bash_profile
    ```
 
+1. Install mint using `Genesis`
+   ```
+   brew install mint
+   mint install Genesis
+   ```
+
 2. Make scripts executable
 
    ```
@@ -61,7 +67,3 @@ See various commands written in `Makefile`
 ### TestFlight
 
     make testflight
-
-### AppStore
-
-    make deploy

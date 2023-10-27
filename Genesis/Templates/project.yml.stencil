@@ -1,8 +1,6 @@
 include:
-  {% for target in targets %}
-  - path: XcodeGen/{{ target.name|split:" "|join:"_" }}.yml
+  - path: XcodeGen/{{ project_name }}.yml
     relativePaths: false
-  {% endfor %}
   - path: XcodeGen/rswift.yml
     relativePaths: false
   - path: XcodeGen/cocoapods.yml
@@ -17,8 +15,6 @@ configs:
   Release: release
 options:
   bundleIdPrefix: {{ bundle_identifier_prefix }}
-  deploymentTarget:
-    iOS: {{ deployment_target }}
 targetTemplates:
   App:
     platform: iOS
@@ -41,7 +37,7 @@ targetTemplates:
     info:
       properties:
         CFBundleShortVersionString: &Version 1.0.0
-        CFBundleVersion: &BundleVersion "197001010000"
+        CFBundleVersion: &BundleVersion "1"
         CFBundleDevelopmentRegion: "$(DEVELOPMENT_LANGUAGE)"
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false

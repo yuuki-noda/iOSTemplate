@@ -1,7 +1,6 @@
 # Variables
 
 PRODUCT_FILE_NAME := {{ project_name }}.xcodeproj
-WORKSPACE_FILE_NAME := {{ project_name }}.xcworkspace
 
 XCODEBUILD_BUILD_LOG_NAME := ./build/xcodebuild_build.log
 
@@ -18,9 +17,6 @@ setup: # Install dependencies and prepared development configuration
 {% if has_brewfile %}
 	brew bundle --no-upgrade --no-lock
 {% endif %}
-{% if use_viper %}
-	$(MAKE) install-templates
-{% endif %}
 {% if has_submodule %}
 	git submodule init
 	git submodule update
@@ -28,9 +24,6 @@ setup: # Install dependencies and prepared development configuration
 	$(MAKE) install-ruby
 	$(MAKE) install-bundler
 	$(MAKE) install-mint
-{% if user_swagger %}
-	./Scripts/swagger-codegen.sh
-{% endif %}
 	$(MAKE) generate-xcodeproj
 
 .PHONY: install-ruby
@@ -51,12 +44,6 @@ update-bundler: # Update Bundler dependencies
 .PHONY: update-dependencies
 update-dependencies: # Update all dependencies
 	$(MAKE) update-bundler
-	bundle exec fastlane update_plugins
-	mint run swift-outdated
-
-.PHONY: check-outdated
-check-outdated: # Check outdated SPM
-	mint run swift-outdated
 
 .PHONY: install-mint
 install-mint: # Install Mint dependencies
@@ -67,17 +54,9 @@ generate-xcodeproj: # Generate project with XcodeGen
 	mkdir -p Tests
 	mint run xcodegen
 
-.PHONY: beta
-beta: # Upload development app to Firebase App Distribution
-	bundle exec fastlane beta distribution_method:Firebase update_build_number:true
-
 .PHONY: testflight
 testflight: # Upload development app to TestFlight
 	bundle exec fastlane beta distribution_method:TestFlight export_method:app-store
-
-.PHONY: deploy
-deploy: # Upload app to App Store Connect
-	bundle exec fastlane deploy
 
 .PHONY: open
 open: # Open project in Xcode

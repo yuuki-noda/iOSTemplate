@@ -8,24 +8,6 @@ options:
   - name: bundle_identifier_prefix
     description: Bundle identifier prefix of the app
     question: What is prefix of bundle identifier for your app?
-  - name: deployment_target
-    description: The minimum iOS Deployment Target
-    question: What is the minimum iOS Deployment Target of your app?
-    required: true
-    type: choice
-    choices:
-      - 13.0
-      - 14.0
-      - 15.0
-      - 16.0
-  - name: targets
-    description: The list of targets
-    question: Do you wish to add a target? (y/n)
-    type: array
-    options:
-      - name: name
-        question: What's the name of the target?
-        type: string
   - name: apple_id
     description: Apple Developer ID
     question: What is your Apple Developer ID?
@@ -45,12 +27,9 @@ files:
   - template: Templates/project.yml.stencil
     path: project.yml
   - template: Templates/target.yml.stencil
-    path: 'XcodeGen/{{ name|split:" "|join:"_" }}.yml'
-    context: targets
+    path: "XcodeGen/{{ project_name }}.yml"
   - template: Templates/xcodegen_rswift.yml.stencil
     path: "XcodeGen/rswift.yml"
-  - template: Templates/xcodegen_cocoapods.yml.stencil
-    path: "XcodeGen/cocoapods.yml"
   - template: Templates/xcodegen_firebase.yml.stencil
     path: "XcodeGen/firebase.yml"
   - template: Templates/xcodegen_spm.yml.stencil
@@ -66,8 +45,6 @@ files:
     path: fastlane/Constant.rb
   - template: Templates/environment.yml.stencil
     path: environment.yml
-  - template: Templates/CustomLane.rb.stencil
-    path: fastlane/CustomLane.rb
   # README
   - template: Templates/README.md.stencil
     path: README.md
@@ -92,7 +69,5 @@ files:
   # R.Swift
   - path: ".rswiftignore"
     contents: "**/MainInterface.storyboard"
-    include: use_r_swift and not freezed
   - path: "R.generated.swift"
     contents: "// "
-    include: use_r_swift and not freezed
