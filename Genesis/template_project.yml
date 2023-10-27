@@ -35,56 +35,28 @@ options:
   - name: itc_team_id
     description: App Store Connect team ID
     question: What is App Store Connect team ID which contains your App?
-  - name: use_periphery
-    description: Either use Periphery or not
-    question: Do you wish to use Periphery? (y/n)
-    required: true
-    type: boolean
-  - name: use_r_swift
-    description: Either use R.swift or not
-    question: Do you wish to use R.swift? (y/n)
-    required: true
-    type: boolean
-  - name: use_viper
-    description: Either use viper module or not
-    question: Do you wish to use VIPER module code generator? (y/n)
-    required: true
-    type: boolean
-  - name: freezed
-    description: Either freeze project or not
-    question: Freeze project settings? (y/n)
-    required: true
-    type: boolean
 files:
   # Genesis
   - template: Templates/BootstrapOptions.yml.stencil
     path: Genesis/Generated/BootstrapOptions.yml
-    include: not freezed
   - template: Templates/DeveloperInfo.yml.stencil
     path: Genesis/Generated/DeveloperInfo.yml
   # XcodeGen
   - template: Templates/project.yml.stencil
     path: project.yml
-    include: not freezed
   - template: Templates/target.yml.stencil
     path: 'XcodeGen/{{ name|split:" "|join:"_" }}.yml'
     context: targets
-    include: not freezed
   - template: Templates/xcodegen_rswift.yml.stencil
     path: "XcodeGen/rswift.yml"
-    include: not freezed
   - template: Templates/xcodegen_cocoapods.yml.stencil
     path: "XcodeGen/cocoapods.yml"
-    include: not freezed
   - template: Templates/xcodegen_firebase.yml.stencil
     path: "XcodeGen/firebase.yml"
-    include: not freezed
   - template: Templates/xcodegen_spm.yml.stencil
     path: "XcodeGen/spm.yml"
-    include: not freezed
   - template: Templates/xcodegen_periphery.yml.stencil
     path: "XcodeGen/periphery.yml"
-    include: not freezed
   # fastlane
   - template: Templates/Appfile.stencil
     path: fastlane/Appfile
@@ -94,7 +66,6 @@ files:
     path: fastlane/Constant.rb
   - template: Templates/environment.yml.stencil
     path: environment.yml
-    include: not freezed
   - template: Templates/CustomLane.rb.stencil
     path: fastlane/CustomLane.rb
   # README
@@ -106,29 +77,19 @@ files:
   # Makefile
   - template: Templates/Makefile.stencil
     path: Makefile
-    include: not freezed
-  # Gemfile
-  - template: Templates/Gemfile.stencil
-    path: Gemfile
-    include: not freezed
   # Swift
   - template: Fixtures/AppDelegate.swift.stencil
     path: App/AppDelegate.swift
-    include: not freezed
   - template: Fixtures/SceneDelegate.swift.stencil
     path: App/SceneDelegate.swift
-    include: not freezed
   - template: Fixtures/ViewController.swift.stencil
     path: App/ViewController.swift
-    include: not freezed
   # Swift Package Manager
   - template: Templates/Package.swift.stencil
     path: Packages/{{ project_name }}Kit/Package.swift
-    include: not freezed
   - path: Packages/{{ project_name }}Kit/Sources/{{ project_name }}Kit.swift
     contents: "// "
-    include: not freezed
-  # R.swift
+  # R.Swift
   - path: ".rswiftignore"
     contents: "**/MainInterface.storyboard"
     include: use_r_swift and not freezed

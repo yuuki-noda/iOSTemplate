@@ -1,4 +1,3 @@
-{% if use_periphery %}
 aggregateTargets:
   Periphery:
     targets:
@@ -10,7 +9,7 @@ aggregateTargets:
           if [ $(uname -m) = "arm64" ]; then
             export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:${PATH+:$PATH}";
           fi
-          xcrun --sdk macosx periphery scan --verbose
+          xcrun --sdk macosx mint run periphery scan --verbose
 schemes:
   Periphery:
     build:
@@ -18,4 +17,3 @@ schemes:
         Periphery: all
     run:
       config: Debug
-{% endif %}

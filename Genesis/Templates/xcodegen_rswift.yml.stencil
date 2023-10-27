@@ -1,4 +1,3 @@
-{% if use_r_swift %}
 targetTemplates:
   App:
     platform: iOS
@@ -23,4 +22,3 @@ schemes:
             fi
           name: R.swift Run Script
           settingsTarget: {{ targets[0].name }}
-{% endif %}
