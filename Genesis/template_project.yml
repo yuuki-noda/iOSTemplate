@@ -35,11 +35,6 @@ options:
   - name: itc_team_id
     description: App Store Connect team ID
     question: What is App Store Connect team ID which contains your App?
-  - name: use_cocoapods
-    description: Either use CocoaPods or not
-    question: Do you wish to use CocoaPods? (y/n)
-    required: true
-    type: boolean
   - name: use_periphery
     description: Either use Periphery or not
     question: Do you wish to use Periphery? (y/n)
@@ -61,18 +56,18 @@ options:
     required: true
     type: boolean
 files:
-# Genesis
+  # Genesis
   - template: Templates/BootstrapOptions.yml.stencil
     path: Genesis/Generated/BootstrapOptions.yml
     include: not freezed
   - template: Templates/DeveloperInfo.yml.stencil
     path: Genesis/Generated/DeveloperInfo.yml
-# XcodeGen
+  # XcodeGen
   - template: Templates/project.yml.stencil
     path: project.yml
     include: not freezed
   - template: Templates/target.yml.stencil
-    path: "XcodeGen/{{ name|split:\" \"|join:\"_\" }}.yml"
+    path: 'XcodeGen/{{ name|split:" "|join:"_" }}.yml'
     context: targets
     include: not freezed
   - template: Templates/xcodegen_rswift.yml.stencil
@@ -90,7 +85,7 @@ files:
   - template: Templates/xcodegen_periphery.yml.stencil
     path: "XcodeGen/periphery.yml"
     include: not freezed
-# fastlane
+  # fastlane
   - template: Templates/Appfile.stencil
     path: fastlane/Appfile
   - template: Templates/Secrets.rb.stencil
@@ -102,21 +97,21 @@ files:
     include: not freezed
   - template: Templates/CustomLane.rb.stencil
     path: fastlane/CustomLane.rb
-# README
+  # README
   - template: Templates/README.md.stencil
     path: README.md
-# Scripts
+  # Scripts
   - template: Templates/clean.sh.stencil
     path: Scripts/clean.sh
-# Makefile
+  # Makefile
   - template: Templates/Makefile.stencil
     path: Makefile
     include: not freezed
-# Gemfile
+  # Gemfile
   - template: Templates/Gemfile.stencil
     path: Gemfile
     include: not freezed
-# Swift
+  # Swift
   - template: Fixtures/AppDelegate.swift.stencil
     path: App/AppDelegate.swift
     include: not freezed
@@ -126,18 +121,14 @@ files:
   - template: Fixtures/ViewController.swift.stencil
     path: App/ViewController.swift
     include: not freezed
-# CocoaPods
-  - template: Templates/Podfile.stencil
-    path: Podfile
-    include: use_cocoapods and not freezed
-# Swift Package Manager
+  # Swift Package Manager
   - template: Templates/Package.swift.stencil
     path: Packages/{{ project_name }}Kit/Package.swift
-    include: not use_cocoapods and not freezed
+    include: not freezed
   - path: Packages/{{ project_name }}Kit/Sources/{{ project_name }}Kit.swift
     contents: "// "
-    include: not use_cocoapods and not freezed
-# R.swift
+    include: not freezed
+  # R.swift
   - path: ".rswiftignore"
     contents: "**/MainInterface.storyboard"
     include: use_r_swift and not freezed

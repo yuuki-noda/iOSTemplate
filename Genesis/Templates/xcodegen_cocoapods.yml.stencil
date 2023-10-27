@@ -1,4 +1,0 @@
-{% if use_cocoapods %}
-options:
-  postGenCommand: bundle exec pod install
-{% endif %}

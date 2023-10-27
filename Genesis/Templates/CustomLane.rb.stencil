@@ -12,11 +12,7 @@ platform :ios do
     end
     clear_derived_data
     scan(
-{% if use_cocoapods %}
-      workspace: "#{PROJECT_NAME}.xcworkspace",
-{% else %}
       project: "#{PROJECT_NAME}.xcodeproj",
-{% endif %}
       scheme: scheme,
       clean: true,
       build_for_testing: true,
@@ -55,11 +51,7 @@ platform :ios do
     end
 
     gym(
-{% if use_cocoapods %}
-      workspace: "#{PROJECT_NAME}.xcworkspace",
-{% else %}
       project: "#{PROJECT_NAME}.xcodeproj",
-{% endif %}
       configuration: configuration,
       scheme: scheme,
       clean: true,
