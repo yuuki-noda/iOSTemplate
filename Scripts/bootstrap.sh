@@ -36,16 +36,6 @@ Generate() {
     *)
         ;;
     esac
-
-    echo -n "Do you want to setup Firebase? [y/n]"
-    read GENERATE_FIREBASE
-    case $GENERATE_FIREBASE in
-        "" | [Yy]*)
-            mint run genesis generate Genesis/template_firebase.yml
-        ;;
-    *)
-        ;;
-    esac
 }
 
 PrintError() {
