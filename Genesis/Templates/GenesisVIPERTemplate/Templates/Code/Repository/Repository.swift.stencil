@@ -11,7 +11,7 @@ protocol {{ module_name }}RepositoryInterface {
 }
 
 final class {{ module_name }}Repository: {{ module_name }}RepositoryInterface {
-    func fetch(force: Bool) async throws -> [Model] {
+    func fetch(force: Bool = true) async throws -> [Model] {
         // TODO:
         return []
     }

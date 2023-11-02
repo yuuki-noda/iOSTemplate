@@ -10,7 +10,7 @@ import Foundation
 protocol {{ module_name }}InteractorInput: AnyObject {
     // MARK: Methods called from presenter
 
-    func fetch() async throws -> [Section]
+    func fetch(force: Bool) async throws -> [Section]
 }
 
 protocol {{ module_name }}InteractorOutput: AnyObject {
@@ -37,7 +37,7 @@ final class {{ module_name }}Interactor {
 }
 
 extension {{ module_name }}Interactor: {{ module_name }}InteractorInput {
-    func fetch() async throws -> [Section] {
+    func fetch(force: Bool = true) async throws -> [Section] {
         let result = try await repository.fetch(force: force)
         await MainActor.run(body: {
             // TODO: store sections

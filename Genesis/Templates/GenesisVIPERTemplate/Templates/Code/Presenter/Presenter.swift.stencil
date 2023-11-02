@@ -32,7 +32,7 @@ final class {{ module_name }}Presenter {
         self.router = router
     }
 
-    private func fetch(force: Bool) {
+    private func fetch(force: Bool = true) {
         Task { [weak view] in
             isLoading = true
             do {
