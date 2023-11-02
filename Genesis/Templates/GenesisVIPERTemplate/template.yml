@@ -25,6 +25,8 @@ files:
     path: "{{ output_path }}/{{ module_name }}/Router/{{ module_name }}Router.swift"
   - template: Templates/Code/Repository/Repository.swift.stencil
     path: "{{ output_path }}/{{ module_name }}/Repository/{{ module_name }}Repository.swift"
+  - template: Templates/Code/Entity/Entity.swift.stencil
+    path: "{{ output_path }}/{{ module_name }}/Entity/{{ module_name}}Entity.swift"
   - template: Templates/Test/View/ViewTest.swift.stencil
     path: "{{ test_output_path }}/{{ module_name }}/View/{{ module_name }}ViewTest.swift"
   - template: Templates/Test/Interactor/InteractorTest.swift.stencil
