@@ -1,19 +1,31 @@
 # iOSAppTemplate
 
-## 前提ライブラリ
+## Prepare environment
 
-### mintのインストール
+1. Install Ruby using `rbenv`
 
-`brew install mint`
+   ```
+   brew update
+   brew install rbenv ruby-build
+   echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
+   source ~/.bash_profile
+   ```
 
-### genesisのインストール
+1. Install mint using `Genesis`
 
-`mint install yonaskolb/genesis`
+   ```
+   brew install mint
+   mint install Genesis
+   ```
 
-## 新しくプロジェクトを作成する方法
+1. Make scripts executable
 
-`./Scripts/bootstrap.sh`を実行
+   ```
+   chmod +x ./Scripts/*
+   ```
 
-## 生成したファイルを削除する方法
+1. Run setup script
 
-`./Scripts/clean.sh`を実行
+   ```
+   ./Scripts/bootstrap.sh
+   ```

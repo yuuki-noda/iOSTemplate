@@ -1,0 +1,18 @@
+//
+//  {{ module_name }}Repository
+//  {{ project_name }}
+//
+//  Created by {{ developer_name }} on {{ date }}.
+//
+
+#error("Replace `Model` to your own model.")
+protocol {{ module_name }}RepositoryInterface {
+    func fetch(force: Bool) async throws -> [Model]
+}
+
+final class {{ module_name }}Repository: {{ module_name }}RepositoryInterface {
+    func fetch(force: Bool) async throws -> [Model] {
+        // TODO:
+        return []
+    }
+}

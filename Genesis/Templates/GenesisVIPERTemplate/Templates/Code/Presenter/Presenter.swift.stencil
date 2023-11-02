@@ -1,0 +1,60 @@
+//
+//  {{ module_name }}Presenter
+//  {{ project_name }}
+//
+//  Created by {{ developer_name }} on {{ date }}.
+//
+
+import Foundation
+
+@MainActor
+protocol {{ module_name }}PresenterInput: AnyObject {
+    var isLoadingPublisher: Published<Bool>.Publisher { get }
+
+    // MARK: View Life-Cycle methods
+
+    func viewDidLoad()
+
+    // MARK: Other methods called from View
+}
+
+final class {{ module_name }}Presenter {
+    // MARK: VIPER properties
+    weak var view: {{ module_name }}ViewInput!
+    var interactor: {{ module_name }}InteractorInput!
+    var router: {{ module_name }}RouterInput!
+
+    @Published var isLoading = false
+
+    init(view: {{ module_name }}ViewInput, interactor: {{ module_name }}InteractorInput, router: {{ module_name }}RouterInput) {
+        self.view = view
+        self.interactor = interactor
+        self.router = router
+    }
+
+    private func fetch(force: Bool) {
+        Task { [weak view] in
+            isLoading = true
+            do {
+                let sections = try await interactor.fetch(force: force)
+                await view?.update(sections: sections)
+            }
+            catch {
+                // TODO: handle error
+            }
+            isLoading = false
+        }
+    }
+}
+
+extension {{ module_name }}Presenter: {{ module_name }}PresenterInput {
+    var isLoadingPublisher: Published<Bool>.Publisher {
+        return $isLoading
+    }
+
+    func viewDidLoad() {
+        fetch()
+    }
+}
+
+extension {{ module_name }}Presenter: {{ module_name }}InteractorOutput {}

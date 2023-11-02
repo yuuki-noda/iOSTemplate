@@ -49,6 +49,12 @@ update-dependencies: # Update all dependencies
 install-mint: # Install Mint dependencies
 	mint bootstrap --overwrite y
 
+.PHONY: generate-module
+generate-module: # Generate VIPER module
+	mint run genesis generate ./Genesis/Templates/GenesisVIPERTemplate/template.yml --options "date:$(shell date +%Y/%m/%d)" --option-path ./Genesis/Generated/DeveloperInfo.yml
+	$(MAKE) format
+	$(MAKE) generate-xcodeproj
+
 .PHONY: generate-xcodeproj
 generate-xcodeproj: # Generate project with XcodeGen
 	mkdir -p Tests

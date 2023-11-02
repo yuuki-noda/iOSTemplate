@@ -1,0 +1,48 @@
+//
+//  {{ module_name }}Interactor
+//  {{ project_name }}
+//
+//  Created by {{ developer_name }} on {{ date }}.
+//
+
+import Foundation
+
+protocol {{ module_name }}InteractorInput: AnyObject {
+    // MARK: Methods called from presenter
+
+    func fetch() async throws -> [Section]
+}
+
+protocol {{ module_name }}InteractorOutput: AnyObject {
+    // MARK: Callback methods for presenter
+}
+
+final class {{ module_name }}Interactor {
+    // MARK: VIPER property
+    weak var presenter: {{ module_name }}InteractorOutput!
+
+    private var repository: {{ module_name }}RepositoryInterface
+
+    // MARK: Stored instance properties
+
+    // MARK: Computed instance properties
+
+    // MARK: Initializer
+    
+    init(repository: {{ module_name }}RepositoryInterface) {
+        self.repository = repository
+    }
+
+    // MARK: Other private methods
+}
+
+extension {{ module_name }}Interactor: {{ module_name }}InteractorInput {
+    func fetch() async throws -> [Section] {
+        let result = try await repository.fetch(force: force)
+        await MainActor.run(body: {
+            // TODO: store sections
+            // sections = ...
+        })
+        return sections
+    }
+}
