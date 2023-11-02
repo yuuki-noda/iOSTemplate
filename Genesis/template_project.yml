@@ -48,9 +48,6 @@ files:
   # README
   - template: Templates/README.md.stencil
     path: README.md
-  # Scripts
-  - template: Templates/clean.sh.stencil
-    path: Scripts/clean.sh
   # Makefile
   - template: Templates/Makefile.stencil
     path: Makefile
