@@ -1,9 +1,7 @@
 aggregateTargets:
   Periphery:
     targets:
-      {% for target in targets %}
-      - {{ target.name }}
-      {% endfor %}
+      - {{ project_name }}
     buildScripts:
       - script: |
           if [ $(uname -m) = "arm64" ]; then

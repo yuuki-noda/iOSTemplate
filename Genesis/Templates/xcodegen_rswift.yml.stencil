@@ -8,7 +8,7 @@ schemes:
   R.swift:
     build:
       targets:
-        {{ targets[0].name }}: all
+        {{ project_name }}: all
       preActions:
         - script: |
             if [ $(uname -m) = "arm64" ]; then
@@ -21,4 +21,4 @@ schemes:
               return -1
             fi
           name: R.swift Run Script
-          settingsTarget: {{ targets[0].name }}
+          settingsTarget: {{ project_name }}
