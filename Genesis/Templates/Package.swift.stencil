@@ -16,7 +16,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/mac-cain13/R.swift.Library", from: "7.4.0"),
+        .package(url: "https://github.com/mac-cain13/R.swift.Library", branch: "master"),
     ],
     targets: [
         .target(
