@@ -10,6 +10,7 @@ import UIKit
 @MainActor
 protocol {{ module_name }}ViewInput: AnyObject {
     // MARK: Callback from presenter
+    func update(sections: [{{ module_name }}Section])
 }
 
 final class {{ module_name }}ViewController: UIViewController {
@@ -26,4 +27,8 @@ final class {{ module_name }}ViewController: UIViewController {
     // MARK: Other private methods
 }
 
-extension {{ module_name }}ViewController: {{ module_name }}ViewInput {}
+extension {{ module_name }}ViewController: {{ module_name }}ViewInput {
+    func update(sections: [{{ module_name }}Section]) {
+        // TODO:
+    }
+}

@@ -37,8 +37,9 @@ final class {{ module_name }}Interactor {
 }
 
 extension {{ module_name }}Interactor: {{ module_name }}InteractorInput {
-    func fetch(force: Bool = true) async throws -> [Section] {
+    func fetch(force: Bool = true) async throws -> [{{ module_name }}Section] {
         let result = try await repository.fetch(force: force)
+        let sections = [{{ module_name }}Section]()
         await MainActor.run(body: {
             // TODO: store sections
             // sections = ...

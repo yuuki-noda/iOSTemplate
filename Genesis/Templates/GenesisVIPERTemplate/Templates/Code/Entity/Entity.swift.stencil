@@ -1,0 +1,18 @@
+//
+//  {{ module_name }}Entity
+//  {{ project_name }}
+//
+//  Created by {{ developer_name }} on {{ date }}.
+//
+
+import Foundation
+
+// TODO:
+struct {{ module_name }}Model {
+    let name: String
+}
+
+// TODO:
+struct {{ module_name }}Section {
+    let models: [Model]
+}
