@@ -16,13 +16,12 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/mac-cain13/R.swift.Library", branch: "master"),
     ],
     targets: [
         .target(
             name: "{{ project_name }}Kit",
             dependencies: [
-                .product(name: "Rswift", package: "R.swift.Library"),
+                
             ],
             path: "Sources"
         )
