@@ -30,6 +30,7 @@ targetTemplates:
           fi
           xcrun --sdk macosx mint run swiftlint
         name: Swiftlint Run Script
+        basedOnDependencyAnalysis: false
     info:
       properties:
         CFBundleShortVersionString: &Version 1.0.0
