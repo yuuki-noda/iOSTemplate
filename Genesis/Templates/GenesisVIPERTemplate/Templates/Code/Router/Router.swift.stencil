@@ -29,7 +29,7 @@ final class {{ module_name }}Router {
         //     fatalError("Fail to load {{ module_name }}ViewController from Storyboard.")
         // }
         let repository = {{ module_name }}Repository()
-        let interactor = {{ module_name }}Interactor()
+        let interactor = {{ module_name }}Interactor(repository: repository)
         let router = {{ module_name }}Router(viewController: view)
         let presenter = {{ module_name }}Presenter(view: view, interactor: interactor, router: router)
 

@@ -14,5 +14,5 @@ struct {{ module_name }}Model {
 
 // TODO:
 struct {{ module_name }}Section {
-    let models: [Model]
+    let models: [{{ module_name }}Model]
 }
