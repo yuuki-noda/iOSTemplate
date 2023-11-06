@@ -67,3 +67,12 @@ See various commands written in `Makefile`
 ### TestFlight
 
     make testflight
+
+## FirebaseCrashlytics
+
+1. firebaseを導入し、`GoogleService-Info.plist`が手元に準備できたら`project.yml`のincludeに以下を追加
+
+```
+- path: XcodeGen/firebase.yml
+  relativePaths: false
+```

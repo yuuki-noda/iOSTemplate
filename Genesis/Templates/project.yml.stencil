@@ -3,8 +3,6 @@ include:
     relativePaths: false
   - path: XcodeGen/rswift.yml
     relativePaths: false
-  - path: XcodeGen/firebase.yml
-    relativePaths: false
   - path: XcodeGen/spm.yml
     relativePaths: false
 name: {{ project_name }}
