@@ -76,3 +76,13 @@ See various commands written in `Makefile`
 - path: XcodeGen/firebase.yml
   relativePaths: false
 ```
+
+2. `{project_name}.yml`に以下を追加
+
+```
+preBuildScripts:
+   - script: |
+       PATH_TO_GOOGLE_PLISTS="${PROJECT_DIR}/App/Resource/Firebase"
+       cp -r "$PATH_TO_GOOGLE_PLISTS/GoogleService-Info.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+     name: GoogleService-Info Run Script
+```
