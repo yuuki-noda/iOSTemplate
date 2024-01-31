@@ -7,8 +7,8 @@
    ```
    brew update
    brew install rbenv ruby-build
-   echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
-   source ~/.bash_profile
+   echo 'eval "$(rbenv init -)"' >> ~/.zshrc
+   source ~/.zshrc
    ```
 
 1. Install mint using `Genesis`
